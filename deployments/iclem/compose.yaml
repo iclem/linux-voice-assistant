@@ -1,0 +1,51 @@
+name: ha-satellite
+
+services:
+  jabra:
+    # Linux Voice Assistant 1.1.15 with assistant selection preserved on follow-ups.
+    build: .
+    image: ha-jabra-satellite:followup-fix
+    container_name: ha-jabra-satellite
+    network_mode: host
+    user: "1001:1001"
+    restart: "no"
+    environment:
+      PULSE_SERVER: tcp:127.0.0.1:4713
+      PULSE_COOKIE: DISABLED
+      XDG_RUNTIME_DIR: /tmp
+      CLIENT_NAME: aeris-jabra
+      HOST: ${SATELLITE_HOST:?Set SATELLITE_HOST in .env}
+      NETWORK_INTERFACE: ${SATELLITE_INTERFACE:?Set SATELLITE_INTERFACE in .env}
+      PORT: "6053"
+      AUDIO_INPUT_CHANNELS: "1"
+      PERIPHERAL_HOST: 127.0.0.1
+      PERIPHERAL_PORT: "6055"
+    volumes:
+      - ./data/local:/app/local
+      - ./data/configuration:/app/configuration
+      - ./data/wakewords-custom:/app/wakewords/custom
+      - ./data/sounds-custom:/app/sounds/custom
+      - /etc/localtime:/etc/localtime:ro
+
+  jabra-mute:
+    image: ha-jabra-satellite:followup-fix
+    container_name: ha-jabra-mute
+    network_mode: host
+    user: "0:0"
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      - jabra
+    entrypoint: ["/app/.venv/bin/python", "/controller/controller.py"]
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+      LVA_WS_URL: ws://127.0.0.1:6055
+      JABRA_SERIAL: ${JABRA_SERIAL:?Set JABRA_SERIAL in .env}
+    devices:
+      - ${JABRA_HID_PATH:-/dev/hidraw0}:/dev/hidraw0
+    volumes:
+      - ./jabra-mute:/controller:ro
