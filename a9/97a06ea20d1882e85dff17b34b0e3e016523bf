@@ -1,0 +1,43 @@
+deployments/iclem/.dockerignore
+  s_ba52c8d9c1f478::t_be1017724ad6fe 1-3
+deployments/iclem/.env.example
+  s_ba52c8d9c1f478::t_012669ba12b80b 1-5
+deployments/iclem/.gitignore
+  s_ba52c8d9c1f478::t_b92d4ce4573ab3 1-7
+deployments/iclem/README.md
+  s_ba52c8d9c1f478::t_bab5e4688ed8fd 1-44
+deployments/iclem/compose.yaml
+  s_ba52c8d9c1f478::t_c50db3cb5c3993 1-51
+deployments/iclem/jabra-mute/README.md
+  s_ba52c8d9c1f478::t_6928feabc51fef 1-60
+deployments/iclem/jabra-mute/controller.py
+  s_ba52c8d9c1f478::t_5c2479547adc75 1-163
+deployments/iclem/jabra-mute/test_controller.py
+  s_ba52c8d9c1f478::t_82385d3aca2c2c 1-83
+deployments/iclem/patch_followup.py
+  s_ba52c8d9c1f478::t_1611d6002bc5d4 1-71
+deployments/iclem/spikes/README.md
+  s_ba52c8d9c1f478::t_beca395afd8270 1-56
+deployments/iclem/spikes/jabra_hid.py
+  s_ba52c8d9c1f478::t_b506a369161060 1-63
+deployments/iclem/spikes/jabra_patterns.py
+  s_ba52c8d9c1f478::t_4bc7957ef6e79a 1-63
+deployments/iclem/test_followup.py
+  s_ba52c8d9c1f478::t_a088576ed6a0b2 1-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a997a06ea20d1882e85dff17b34b0e3e016523bf",
+  "prompts": {},
+  "sessions": {
+    "s_ba52c8d9c1f478": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a124ea-b822-7861-9e98-dcac9afb0b45",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "iclem <34319463+iclem@users.noreply.github.com>"
+    }
+  }
+}
