@@ -28,8 +28,8 @@ The controller reuses the satellite image's Python/websockets runtime, mounts
 only its source and the Jabra hidraw device, uses a read-only filesystem, and
 has all Linux capabilities dropped. Root is used to access the root-only
 hidraw device. Its startup verifies USB ID 0b0e:0422 and device serial.
-The controller restarts unless explicitly stopped; the satellite's existing
-restart policy was preserved.
+Both the controller and satellite use restart: unless-stopped, so they
+start after a host reboot unless explicitly stopped beforehand.
 
 Run from `deployments/iclem`:
 

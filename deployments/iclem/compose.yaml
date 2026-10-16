@@ -8,7 +8,7 @@ services:
     container_name: ha-jabra-satellite
     network_mode: host
     user: "1001:1001"
-    restart: "no"
+    restart: unless-stopped
     environment:
       PULSE_SERVER: tcp:127.0.0.1:4713
       PULSE_COOKIE: DISABLED
