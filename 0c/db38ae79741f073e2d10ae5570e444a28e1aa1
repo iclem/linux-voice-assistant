@@ -1,0 +1,24 @@
+deployments/iclem/test_followup.py
+  s_ba52c8d9c1f478::t_fdf2ab9b36affc 24-25,30-31,60-88,91-93
+  s_ba52c8d9c1f478::t_07c349fc806961 89-90
+deployments/iclem/README.md
+  s_ba52c8d9c1f478::t_831ac13be8fcce 45-53
+deployments/iclem/patch_followup.py
+  s_ba52c8d9c1f478::t_b729851e76d145 14,26-30,40-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0cdb38ae79741f073e2d10ae5570e444a28e1aa1",
+  "prompts": {},
+  "sessions": {
+    "s_ba52c8d9c1f478": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a124ea-b822-7861-9e98-dcac9afb0b45",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "iclem <34319463+iclem@users.noreply.github.com>"
+    }
+  }
+}
