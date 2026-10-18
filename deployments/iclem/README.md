@@ -42,3 +42,12 @@ version-controlled directory. Runtime data stays local and is not published.
 Only source, tests, deployment templates and documentation are committed.
 No HA tokens, API keys, runtime preferences, model binaries, recorded audio,
 conversation logs, local environment values or device serials are included.
+
+## Mute during a conversation
+
+The pinned 1.1.15 mute handler can leave its pipeline and audio-streaming
+flags set when a follow-up is muted before STT finishes. After unmute, this
+blocks wake-word detection. The deployment patch now clears both flags,
+cancels the HA request, disables continuation and invalidates delayed
+follow-ups. Regression tests cover resuming wake-word detection and a quick
+mute/unmute during the follow-up delay.

@@ -21,10 +21,14 @@ class FollowupTests(unittest.TestCase):
             wakeup_sound="wake.flac",
             start_listening_sound="listen.flac",
             listen_during_wake_sound=False,
+            mute_sound="mute.flac",
+            unmute_sound="unmute.flac",
         )
         satellite._pipeline_active = False
         satellite._continue_conversation = False
         satellite._conversation_wake_word_phrase = ""
+        satellite._followup_generation = 0
+        satellite._is_streaming_audio = False
         satellite.send_messages = Mock()
         satellite._emit = Mock()
         satellite.duck = Mock()
@@ -52,6 +56,40 @@ class FollowupTests(unittest.TestCase):
         satellite._conversation_wake_word_phrase = "Okay Nabu"
         satellite.start_listening()
         self.assertEqual(satellite._conversation_wake_word_phrase, "")
+
+    def test_mute_cancels_streaming_and_allows_next_wake_word(self):
+        satellite = self.make_satellite()
+        satellite._pipeline_active = True
+        satellite._is_streaming_audio = True
+        satellite._continue_conversation = True
+        satellite._set_muted(True)
+        self.assertFalse(satellite._pipeline_active)
+        self.assertFalse(satellite._is_streaming_audio)
+        self.assertFalse(satellite._continue_conversation)
+        requests = [call.args[0][0] for call in satellite.send_messages.call_args_list]
+        self.assertTrue(any(isinstance(request, VoiceAssistantRequest) and not request.start for request in requests))
+        satellite._set_muted(False)
+        satellite.send_messages.reset_mock()
+        satellite.wakeup(SimpleNamespace(wake_word="hey_luna"))
+        self.assertTrue(satellite._pipeline_active)
+        self.assertEqual(satellite.state.tts_player.play.call_args.args[0], "wake.flac")
+        satellite.state.tts_player.play.call_args.kwargs["done_callback"]()
+        request = satellite.send_messages.call_args.args[0][0]
+        self.assertTrue(request.start)
+        self.assertEqual(request.wake_word_phrase, "hey_luna")
+
+    def test_mute_invalidates_pending_followup_even_after_unmute(self):
+        satellite = self.make_satellite()
+        satellite._continue_conversation = True
+        with patch("linux_voice_assistant.satellite.threading.Timer") as timer:
+            satellite._tts_finished()
+            callback = timer.call_args.args[1]
+            satellite._set_muted(True)
+            satellite._set_muted(False)
+            satellite.send_messages.reset_mock()
+            callback()
+        satellite.send_messages.assert_not_called()
+        self.assertFalse(satellite._pipeline_active)
 
     def test_muted_followup_does_not_start(self):
         satellite = self.make_satellite()

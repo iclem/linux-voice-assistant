@@ -11,7 +11,7 @@ replacements = [
     ),
     (
         "        self._tts_url: Optional[str] = None\n",
-        "        self._tts_url: Optional[str] = None\n" '        self._conversation_wake_word_phrase = ""\n',
+        "        self._tts_url: Optional[str] = None\n" '        self._conversation_wake_word_phrase = ""\n' "        self._followup_generation = 0\n",
     ),
     (
         "        wake_word_phrase = wake_word.wake_word  # type: ignore[union-attr]\n",
@@ -23,7 +23,11 @@ replacements = [
     ),
     (
         "            def _start_continued_conversation() -> None:\n",
-        "            wake_word_phrase = self._conversation_wake_word_phrase\n\n" "            def _start_continued_conversation() -> None:\n",
+        "            wake_word_phrase = self._conversation_wake_word_phrase\n"
+        "            followup_generation = self._followup_generation\n\n"
+        "            def _start_continued_conversation() -> None:\n"
+        "                if followup_generation != self._followup_generation:\n"
+        "                    return\n",
     ),
     (
         "                self.send_messages([VoiceAssistantRequest(start=True)])\n",
@@ -32,6 +36,19 @@ replacements = [
     (
         '                _LOGGER.debug("Continued conversation started")\n',
         '                _LOGGER.info("Continued conversation started with wake word: %s", wake_word_phrase)\n',
+    ),
+    (
+        "        if self.state.muted:\n            # voice_assistant.stop behavior\n",
+        "        if self.state.muted:\n"
+        "            was_active = self._pipeline_active or self._is_streaming_audio\n"
+        "            self._followup_generation += 1\n"
+        "            self._continue_conversation = False\n"
+        "            self._pipeline_active = False\n"
+        "            self._is_streaming_audio = False\n"
+        "            if was_active:\n"
+        "                self.send_messages([VoiceAssistantRequest(start=False)])\n"
+        "            self.unduck()\n"
+        "            # voice_assistant.stop behavior\n",
     ),
 ]
 for old, new in replacements:
